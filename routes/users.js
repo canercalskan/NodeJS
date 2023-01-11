@@ -38,4 +38,17 @@ userRoutes.put('/users' , (req , res) => {
     }
 })
 
+// Get entry with an id
+
+userRoutes.get('/users/:id' , (req , res) => {
+    const returnUser = users.find(user => user.id === req.params.id) || undefined;
+    if(returnUser) {
+        res.status(200).send(returnUser)
+    }
+    else {
+        res.status(404).send('No such user');
+    }
+     
+})
+
 export default userRoutes
