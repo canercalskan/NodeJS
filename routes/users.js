@@ -1,54 +1,26 @@
 import express, { response } from 'express'
 import { v4 as uuidv4 } from 'uuid';
+import { deleteUser, getAllUsers, getUserWithID, postNewUser, updateUser } from '../functions/user-functions.js';
 
 const userRoutes = express.Router();
 
-let users = []
 
 //All routes starts with /api, we are using it as a root route.
-userRoutes.get('/users' , (req , res) => {
-    res.send(users)
-})
+userRoutes.get('/users' , getAllUsers)
 
-userRoutes.post('/users' , (req , res) => {
-    const receivedUser = req.body
-    users.push({...receivedUser , id : uuidv4()});
-    res.status(200).send('User ' + receivedUser.name + ' posted');
-    console.log(uuidv4() +' posted..')
-})
+// Post new user to the database
+userRoutes.post('/users' , postNewUser)
 
-userRoutes.delete('/users' , (req,res) => {
-    if(users.find(user => user.id === req.body.id)) {
-        users = users.filter(user => user.id !== req.body.id);
-        res.status(200).send('Succesfully deleted user ' + req.body.id);
-        console.log(req.body.id + ' deleted');
-    }
-    else {
-        res.status(404).send('No such user.');
-        console.log(req.body.id + ' not exists');
-    }
-})
+// Get entry with an id parameter
 
-userRoutes.put('/users' , (req , res) => {
-    if(users.find(user => user.id === req.body.id)) {
-        // make an update
-    }   
-    else {
-        res.status(404).send('No such user.')
-    }
-})
+userRoutes.get('/users/:id' , getUserWithID)
 
-// Get entry with an id
+// Delete entry with an id parameter
 
-userRoutes.get('/users/:id' , (req , res) => {
-    const returnUser = users.find(user => user.id === req.params.id) || undefined;
-    if(returnUser) {
-        res.status(200).send(returnUser)
-    }
-    else {
-        res.status(404).send('No such user');
-    }
-     
-})
+userRoutes.delete('/users/:id' , deleteUser)
+
+// Update entry with an id parameter
+
+userRoutes.patch('/users/:id/:username' , updateUser)
 
 export default userRoutes
